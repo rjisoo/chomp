@@ -2,7 +2,7 @@ body {
   padding: 10px;
 }
 
-h1, h2 {
+h1, h2, h5 {
   text-align: center;
 }
 #board{
@@ -11,8 +11,8 @@ h1, h2 {
 
 #board td{
   border: 1px solid #ddd;
-  width: 18px;
-  height: 18px;
+  width: 70px;
+  height: 70px;
 }
 
 td.alive {
