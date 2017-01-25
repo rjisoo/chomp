@@ -1,7 +1,7 @@
 var gameOfLife = {
   
-  width: 5, 
-  height: 5, // width and height dimensions of the board
+  width: 12, 
+  height: 12, // width and height dimensions of the board
 
   createAndShowBoard: function () {
     
@@ -28,64 +28,80 @@ var gameOfLife = {
   },
 
   forEachCell: function (iteratorFunc) {
-    /* 
-      Write forEachCell here. You will have to visit
-      each cell on the board, call the "iteratorFunc" function,
-      and pass into func, the cell and the cell's x & y
-      coordinates. For example: iteratorFunc(cell, x, y)
-    */
+    for (let i = 0; i < gameOfLife.width; i++) {
+      for (let j = 0; j < gameOfLife.height; j++) {
+        let thisCell = gameOfLife.selectCell(i, j);
+        iteratorFunc(thisCell, i, j)
+      }
+    }
   },
   
   setupBoardEvents: function() {
-    // each board cell has an CSS id in the format of: "x-y" 
-    // where x is the x-coordinate and y the y-coordinate
-    // use this fact to loop through all the ids and assign
-    // them "click" events that allow a user to click on 
-    // cells to setup the initial state of the game
-    // before clicking "Step" or "Auto-Play"
-    
-    // clicking on a cell should toggle the cell between "alive" & "dead"
-    // for ex: an "alive" cell be colored "blue", a dead cell could stay white
-    
-    // EXAMPLE FOR ONE CELL
-    // Here is how we would catch a click event on just the 0-0 cell
-    // You need to add the click event on EVERY cell on the board
-    
-    var onCellClick = function (e) {
-      
-      // QUESTION TO ASK YOURSELF: What is "this" equal to here?
-      
-      // how to set the style of the cell when it's clicked
-      if (this.getAttribute('data-status') == 'dead') {
-        this.className = "alive";
-        this.setAttribute('data-status', 'alive');
-      } else {
-        this.className = "dead";
-        this.setAttribute('data-status', 'dead');
+    gameOfLife.forEachCell(cell => {
+      cell.addEventListener('click', gameOfLife.toggleCellStatus.bind(this, cell));
+    })
+    document.getElementById('clear_btn').addEventListener('click', gameOfLife.clear.bind(this));
+    document.getElementById('set_own').addEventListener('click', gameOfLife.newSize.bind(this));
+    document.getElementById('resetAll').addEventListener('click', gameOfLife.resetBoard.bind(this));
+    document.getElementById('0-0').addEventListener('click', gameOfLife.lose.bind(this));
+  },
+
+  setCellStatus: function (cell, status) {
+    cell.setAttribute('data-status', status);
+    cell.className = status;
+  },
+  selectCell: function (pX, pY) {
+    return document.getElementById(pX + '-' + pY);
+  },
+
+  getCellCoords: function (cellElement) {
+    // Arr of x and y
+    return cellElement.id.split('-').map(Number)
+  },
+  toggleCellStatus: function(cell) {
+    var xy = gameOfLife.getCellCoords(cell)
+    var x = xy[0];
+    var y = xy[1];
+
+    gameOfLife.forEachCell(function (cell, i, j) {
+      if (i >= x && y <=j) {
+        var cellToKill = gameOfLife.selectCell(i, j)
+        gameOfLife.setCellStatus(cellToKill, 'dead')
       }
-      
-    };
-    
-    var cell00 = document.getElementById('0-0');
-    cell00.addEventListener('click', onCellClick);
+    })
   },
-
-  step: function () {
-    // Here is where you want to loop through all the cells
-    // on the board and determine, based on it's neighbors,
-    // whether the cell should be dead or alive in the next
-    // evolution of the game. 
-    //
-    // You need to:
-    // 1. Count alive neighbors for all cells
-    // 2. Set the next state of all cells based on their alive neighbors
+  clear: function() {
+    gameOfLife.forEachCell(cell => {
+      gameOfLife.setCellStatus(cell, 'alive');
+    })
   },
+  newSize: function() {
+    var newWidth = document.getElementById('newWidth').value;
+    var newHeight = document.getElementById('newHeight').value;
 
-  enableAutoPlay: function () {
-    // Start Auto-Play by running the 'step' function
-    // automatically repeatedly every fixed time interval  
+     if(newWidth > 50 || newHeight >50){
+        return alert("Number too large!");
+      }
+
+     this.width = newWidth > 0 ? newWidth :1  ;
+      this.height = newHeight > 0 ? newHeight :1 ;
+
+
+     var board = document.getElementById('board');
+      board.innerHTML = "";
+      this.createAndShowBoard();
+  },
+  resetBoard: function(){
+    this.width = 12;
+    this.height = 12;
+
+    var board = document.getElementById('board');
+    board.innerHTML = "";
+    this.createAndShowBoard();
+  },
+  lose: function() {
+    alert('LOSER')
   }
-  
 };
 
 gameOfLife.createAndShowBoard();

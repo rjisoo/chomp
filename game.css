@@ -10,17 +10,17 @@ h1, h2, h5 {
 }
 
 #board td{
-  border: 1px solid #ddd;
-  width: 70px;
-  height: 70px;
+  border: 1px solid #ccc;
+  width: 30px;
+  height: 30px;
 }
 
 td.alive {
-  background-color: #8CC8DD;
+  background-color: #fff;
 }
 
 td.dead {
-  background-color: #fff;
+  background-color: #7CC7DD;
 }
 
 #control_panel {
